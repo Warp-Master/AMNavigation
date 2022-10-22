@@ -4,7 +4,7 @@ from datetime import datetime
 from MyTypes import Graph, NameMap, Cache
 from dijkstra import dijkstra
 # used when the start or end points are not found
-from constants import DEFAULT_DISTANCE
+from config import DEFAULT_DISTANCE
 
 
 @dataclass
