@@ -9,6 +9,7 @@ from constants import DEFAULT_DISTANCE
 
 @dataclass
 class Flight:
+    id: int
     date: datetime
     flight_type: str
     terminal_name: str

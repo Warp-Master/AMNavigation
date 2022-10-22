@@ -38,6 +38,7 @@ def parse_flights(filepath: str) -> list[Flight]:
         next(reader, None)  # skip header
         for row in reader:
             flight = Flight(
+                id=len(flights),
                 date=datetime.strptime(f"{row[0]} {row[5]}", "%d.%m.%Y %H:%M"),
                 flight_type=row[1],
                 terminal_name=row[2],
