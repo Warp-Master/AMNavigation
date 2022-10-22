@@ -10,6 +10,6 @@ class Task:
     id: int
     flight: Flight
     status: str
-    load_time: datetime
-    unload_time: datetime
+    start_time: datetime
+    finish_time: datetime
     bus_list: list[Bus]
