@@ -47,5 +47,4 @@ class Flight:
         if start is None or stop is None:
             return DEFAULT_DISTANCE
 
-        distance, parent = dijkstra(g, start, stop, cache)
-        return distance[stop]
+        return dijkstra(g, start, stop, cache)[stop]
