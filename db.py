@@ -67,14 +67,14 @@ class DBWorker(Thread):
         self.tasks = Queue()
         self.adb = None
 
-    async def run(self) -> None:
+    def run(self) -> None:
         self.adb = sqlite3.connect('bot_db.sqlite')
 
         def set_result(fut, result):
             if not fut.done():
                 fut.set_result(result)
         while True:
-            task_type, sql, commit_all, future = await self.tasks.get()
+            task_type, sql, commit_all, future = self.tasks.get()
             # print(sql)
             try:
                 if task_type == TaskType.WITHOUT_RES:

@@ -9,7 +9,7 @@ from MyTypes import Graph, Cache, TaskSolution
 from User import User, Group
 from cache import add_to_cache
 from config import PRECACHED_LOCATION_LIST
-from config import SMALL_BUS_CNT, SMALL_BUS_CAPACITY, BIG_BUS_CNT, BIG_BUS_CAPACITY
+from config import SMALL_BUS_CNT, SMALL_BUS_CAPACITY, BIG_BUS_CNT, BIG_BUS_CAPACITY, SPEED_LIMIT, LOAD_TIME, UNLOAD_TIME
 from parser import build_graph, parse_flights, parse_naming_map
 
 
@@ -26,7 +26,7 @@ class BusPool:
         sorted_big = sorted(zip(map(get_time, self.big_buses), self.big_buses), key=itemgetter(0))
 
         best_solution = (timedelta.max, 0, 0)
-        for big_cnt in range(pass_cnt // 100 + pass_cnt % 100 > 0 + 1):
+        for big_cnt in range(pass_cnt // 100 + (pass_cnt % 100 > 0) + 1):
             if big_cnt > pass_cnt // 100:
                 sml_cnt = 0
             else:
@@ -104,7 +104,7 @@ def main():
     for terminal_name in PRECACHED_LOCATION_LIST:
         add_to_cache(terminal_name, cache, graph, naming_map)
 
-    now = datetime.now()
+    now = datetime.now()  # this should be changed to generated time in modulation
     for flight in flights:
         if flight.type == 'A':
             start_id = naming_map[flight.parking_number]
@@ -118,7 +118,11 @@ def main():
                                                                cache,
                                                                flight.passengers_count,
                                                                start_id)
-        print(f"{flight}\t{solution}")
+
+        secs_for_exec = flight.get_distance(graph, cache, naming_map) * 2 / SPEED_LIMIT + UNLOAD_TIME + LOAD_TIME
+        time_for_done = solution[0] + timedelta(seconds=secs_for_exec)
+
+        print(f"{flight}\t{time_for_done}")
 
     # debug section
     # print(name_mapping)
