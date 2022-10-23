@@ -6,6 +6,7 @@ from typing import Iterator
 
 from Bus import Bus, BusStatus
 from MyTypes import Graph, Cache, TaskSolution
+from Task import Task, TaskStatus
 from User import User, Group
 from cache import add_to_cache
 from config import PRECACHED_LOCATION_LIST
@@ -121,6 +122,15 @@ def main():
 
         secs_for_exec = flight.get_distance(graph, cache, naming_map) * 2 / SPEED_LIMIT + UNLOAD_TIME + LOAD_TIME
         time_for_done = solution[0] + timedelta(seconds=secs_for_exec)
+
+        Task(
+            id=5,
+            flight=flight,
+            status=TaskStatus.PLANNED,
+            start_time=now + solution[0],
+            finish_time=now + time_for_done,
+            bus_list=solution[1] + solution[2]
+        )
 
         print(f"{flight}\t{time_for_done}")
 
