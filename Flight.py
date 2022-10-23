@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from db import database
 
 from MyTypes import Graph, NameMap, Cache
 from dijkstra import dijkstra
@@ -33,6 +34,20 @@ class Flight:
 
     def __gt__(self, other: "Flight") -> bool:
         return self.date > other.date
+
+    def update(self):
+        database.execute(f"UPDATE Flight SET date = '{self.date.strftime('%d.%m.%Y %H:%M')}',\
+            flight_type = '{self.type}', \
+            terminal_name = '{self.terminal_name}',\
+            airline_code = '{self.airline_code}',\
+            airline_number = '{self.airline_number}',\
+            airport_code = '{self.airport_code}',\
+            airport_name = '{self.airport_name}',\
+            aircraft_type = '{self.aircraft_type}',\
+            parking_number = '{self.parking_number}',\
+            gate_number = '{self.gate_number}',\
+            passengers_count = '{self.passengers_count}'\
+            WHERE id = '{self.id}'")
 
     def get_distance(self, g: Graph, cache: Cache, mapping: NameMap) -> float:
         if self.type == "A":
