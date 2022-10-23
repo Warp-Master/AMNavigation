@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from db import database
+from db import DBWorker
 
 
 class Group(Enum):
@@ -20,8 +20,8 @@ class User:
     name: str
 
 
-def update(self):
-    database.execute(f"UPDATE Users SET login = '{self.login}',\
+def update(self, db: DBWorker):
+    db.execute(f"UPDATE Users SET login = '{self.login}',\
         pwd_hash = '{self.pwd_hash}', \
         salt = '{self.salt}',\
         group_id = '{self.group}',\
