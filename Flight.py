@@ -14,7 +14,7 @@ class Flight:
                  gate_number: str, passengers_count: int) -> None:
         self.id: int = flight_id
         self.date: datetime = date
-        self.flight_type: str = flight_type
+        self.type: str = flight_type
         self.terminal_name: str = terminal_name
         self.airline_code: str = airline_code
         self.airline_number: int = airline_number
@@ -35,14 +35,14 @@ class Flight:
         return self.date > other.date
 
     def get_distance(self, g: Graph, cache: Cache, mapping: NameMap) -> float:
-        if self.flight_type == "A":
+        if self.type == "A":
             start = mapping.get(self.gate_number, None)
             stop = mapping.get(self.parking_number, None)
-        elif self.flight_type == "D":
+        elif self.type == "D":
             start = mapping.get(self.parking_number, None)
             stop = mapping.get(self.gate_number, None)
         else:
-            raise ValueError(f"bad flight type: {self.flight_type}")
+            raise ValueError(f"bad flight type: {self.type}")
 
         if start is None or stop is None:
             return DEFAULT_DISTANCE
