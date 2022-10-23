@@ -7,6 +7,7 @@ from db import DBWorker
 
 
 class TaskStatus(Enum):
+    """Класс статуса задачи"""
     PLANNED = 0
     RUNNING = 1
     FINISHED = 2
@@ -16,6 +17,7 @@ class TaskStatus(Enum):
 @dataclass
 class Task:
     """
+    Дата класс с данными задачи
     TODO:
         - remove potential SQL injection in update and write_to_db
     """

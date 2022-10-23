@@ -18,17 +18,22 @@ from parser import build_graph, parse_flights, parse_naming_map
 def main():
     cache = defaultdict(None)
 
+    # парсинг csv файлов
     naming_map = parse_naming_map("csv/name-map.csv")
     graph = build_graph("csv/edges.csv")
     flights = sorted(parse_flights("csv/timetable.csv"))
 
+    # создание пула автобусов для оптимизации задач
     bus_pool = BusPool(list(small_bus_gen()), list(big_bus_gen()))
 
+    # предварительно кешируем все локации из конфига
     for terminal_name in PRECACHED_LOCATION_LIST:
         add_to_cache(terminal_name, cache, graph, naming_map)
 
-    now = datetime.now()  # this should be changed to generated time in modulation
+    # TODO: change to modulation time
+    now = datetime.now()
 
+    # Очищаем таблицу с заданиями и заполняем её по новой. Один рейс = одна задача.
     database.execute("DELETE FROM Task;", commit=True)
     for flight in flights:
         if flight.type == 'A':

@@ -5,6 +5,8 @@ from cls.User import User, Group
 from config import SMALL_BUS_CNT, SMALL_BUS_CAPACITY, BIG_BUS_CNT, BIG_BUS_CAPACITY
 
 
+# Дефолтный юзер для копирования в качестве водителей
+# TODO: реализовать фабрику юзеров с рандомными именами
 u = User(
         id=0,
         login="",
@@ -16,6 +18,7 @@ u = User(
 
 
 def small_bus_gen():
+    """Генератор автобусов маленького размера для инициализации"""
     for i in range(SMALL_BUS_CNT):
         yield Bus(
             id=i,
@@ -30,6 +33,7 @@ def small_bus_gen():
 
 
 def big_bus_gen():
+    """Генератор автобусов большого размера для инициализации"""
     for i in range(BIG_BUS_CNT):
         yield Bus(
             id=SMALL_BUS_CNT + i,
@@ -44,5 +48,6 @@ def big_bus_gen():
 
 
 def init_bus_generator() -> Iterator[Bus]:
+    """Генератор всех автобусов для инициализации"""
     yield from small_bus_gen()
     yield from big_bus_gen()

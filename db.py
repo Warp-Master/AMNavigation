@@ -5,6 +5,7 @@ from threading import Thread
 from enum import Enum
 
 if __name__ == "__main__":
+    # Первоначальная инциализация бд из csv файлов
     conn = sqlite3.connect('bot_db.sqlite')
     cur = conn.cursor()
 
@@ -56,12 +57,14 @@ if __name__ == "__main__":
 
 
 class TaskType(Enum):
+    """Тип задачи"""
     WITHOUT_RES = 0
     WITH_RES = 1
     COMMIT = 2
 
 
 class DBWorker(Thread):
+    """Тред отвечающий за работу за бд"""
     def __init__(self):
         super().__init__()
         self.tasks = Queue()
@@ -97,20 +100,24 @@ class DBWorker(Thread):
                 print('db error', ex)
 
     async def execute_wait(self, sql, commit=True):
+        """Корутина исполнения sql запроса в бд"""
         future = asyncio.get_event_loop().create_future()
         task = (TaskType.WITHOUT_RES, sql, commit, future)
         self.tasks.put_nowait(task)
         await future
 
     def execute(self, sql, commit=True):
+        """Добавление задачи в очередь"""
         task = (TaskType.WITHOUT_RES, sql, commit, None)
         self.tasks.put_nowait(task)
 
     def commit(self):
+        """Отправление данных в бд"""
         task = (TaskType.COMMIT, None, None, None)
         self.tasks.put_nowait(task)
 
     async def execute_with_res(self, sql, fetchall=True):
+        """Корутина исполнения sql запроса в бд с возвращением результата"""
         future = asyncio.get_event_loop().create_future()
 
         task = (TaskType.WITH_RES, sql, fetchall, future)
@@ -123,12 +130,13 @@ database = DBWorker()
 database.start()
 
 
-def execute_with_res_o(sql, fetchall=True):
-    database = sqlite3.connect('bot_db.sqlite')
-    cur = database.execute(sql)
-    if fetchall:
-        res = cur.fetchall()
-    else:
-        res = cur.fetchone()
-    database.close()
-    return res
+# def execute_with_res_o(sql, fetchall=True):
+#     """Выполняет с возвращением результата"""
+#     database = sqlite3.connect('bot_db.sqlite')
+#     cur = database.execute(sql)
+#     if fetchall:
+#         res = cur.fetchall()
+#     else:
+#         res = cur.fetchone()
+#     database.close()
+#     return res

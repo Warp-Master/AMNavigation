@@ -11,6 +11,7 @@ from cls.User import User
 
 
 def parse_naming_map(filepath: str) -> NameMap:
+    """получение отношения имён и кодов локаций из csv файла"""
     name_mapping = dict()
     with open(filepath) as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
@@ -21,6 +22,7 @@ def parse_naming_map(filepath: str) -> NameMap:
 
 
 def build_graph(filepath: str) -> Graph:
+    """Построение графа из csv файла с дорогами"""
     graph = defaultdict(list)
 
     with open(filepath) as csvfile:
@@ -36,6 +38,7 @@ def build_graph(filepath: str) -> Graph:
 
 
 def parse_flights(filepath: str) -> list[Flight]:
+    """Парсит csv файл и возвращает список с рейсами"""
     flights = []
     with open(filepath) as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
@@ -61,6 +64,7 @@ def parse_flights(filepath: str) -> list[Flight]:
 
 def load_db():
     """
+    Чтение из базы данных
     Todo:
         - split to separate functions
     """

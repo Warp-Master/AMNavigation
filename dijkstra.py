@@ -5,6 +5,7 @@ from MyTypes import Graph, DistanceMap, Cache
 
 
 def dijkstra(g: Graph, start: int, stop: int | None = None, cache: Cache | None = None) -> DistanceMap:
+    """Алгоритм Дейкстры возвращает словарь с расстояниями до точек из данной"""
     if cache is not None and start in cache:
         return cache[start]
 

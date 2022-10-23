@@ -8,7 +8,7 @@ from MyTypes import Graph, Cache, TaskSolution
 from cls.Task import Task
 from cls.User import User
 from config import SPEED_LIMIT
-from db import database
+from db import DBWorker
 from dijkstra import dijkstra
 
 
@@ -21,6 +21,7 @@ class BusStatus(Enum):
 
 @dataclass
 class Bus:
+    """Дата класс с данными автобуса"""
     id: int
     task: Task | None
     driver: User
@@ -31,6 +32,7 @@ class Bus:
     free_time: datetime | None
 
     def time_for_delivery(self, start_time: datetime, graph: Graph, cache: Cache, target_id: int) -> timedelta:
+        """Возвращает время необходимое, чтобы автобус доехал до target_id, начав в start_time"""
         if self.status == BusStatus.WAITING:
             distance = dijkstra(graph, self.location_id, target_id, cache)[target_id]
             return timedelta(seconds=distance / SPEED_LIMIT)
@@ -38,8 +40,9 @@ class Bus:
             distance = dijkstra(graph, self.free_location_id, target_id, cache)[target_id]
             return max(timedelta(), self.free_time - start_time) + timedelta(seconds=distance / SPEED_LIMIT)
 
-    def update(self):
-        database.execute(f"UPDATE Bus SET current_task_id = '{self.task.id}',\
+    def update(self, db: DBWorker):
+        """Обновляет запись в бд"""
+        db.execute(f"UPDATE Bus SET current_task_id = '{self.task.id}',\
             driver_id = '{self.driver.id}', \
             capacity = '{self.capacity}',\
             status = '{self.status}',\
@@ -50,6 +53,7 @@ class Bus:
 
 
 class BusPool:
+    """Оптимизационный пул автобусов"""
     def __init__(self, small_busses: list, big_busses: list):
         self.small_buses = small_busses
         self.big_buses = big_busses

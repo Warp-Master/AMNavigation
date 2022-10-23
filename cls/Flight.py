@@ -10,6 +10,7 @@ from config import DEFAULT_DISTANCE
 
 @dataclass
 class Flight:
+    """Датакласс с данными рейса"""
     def __init__(self, flight_id: int, date: datetime, flight_type: str, terminal_name: str, airline_code: str,
                  airline_number: int, airport_code: str, airport_name: str, aircraft_type: str, parking_number: str,
                  gate_number: str, passengers_count: int) -> None:
@@ -36,6 +37,7 @@ class Flight:
         return self.date > other.date
 
     def update(self, db: DBWorker):
+        """Обновление в бд"""
         db.execute(f"UPDATE Flight SET date = '{self.date.strftime('%d.%m.%Y %H:%M')}',\
             flight_type = '{self.type}', \
             terminal_name = '{self.terminal_name}',\
@@ -50,6 +52,7 @@ class Flight:
             WHERE id = '{self.id}'")
 
     def get_distance(self, g: Graph, cache: Cache, mapping: NameMap) -> float:
+        """Возвращает расстояние между терминалом и самолётом в метрах в зависимости от типа рейса"""
         if self.type == "A":
             start = mapping.get(self.gate_number, None)
             stop = mapping.get(self.parking_number, None)
