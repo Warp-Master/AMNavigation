@@ -1,6 +1,8 @@
 import asyncio, json
 import websockets
 
+#тестовая заглушка для взаимодействия с web-ui
+
 async def echo(websocket):
     task = {
         'id':56,
@@ -49,6 +51,11 @@ async def echo(websocket):
             'id':3,
             'driver_name':'Иванов',
             'type':100
+        },
+        {
+            'id':4,
+            'driver_name':'Михайлов',
+            'type':50
         }
     ]
 
@@ -99,10 +106,23 @@ async def echo(websocket):
     tasks = {
         'tasks':[task,task2,task3,task4,task5,task6],
         'buses':buses
-    }
-    while True:        
-        await websocket.send(json.dumps(tasks))
-        await asyncio.get_event_loop().run_in_executor(None,input,"Write mode:")
+    }     
+
+    task_by_ids = dict()
+    for ts in tasks['tasks']:
+        task_by_ids[ts['id']] = ts
+
+    buses_by_ids = dict()
+    for ts in tasks['buses']:
+        buses_by_ids[ts['id']] = ts
+
+    await websocket.send(json.dumps(tasks))
+
+    while True:
+        async for message in websocket:
+            data = json.loads(message)
+            print(message)
+        #await asyncio.get_event_loop().run_in_executor(None,input,"Write mode:")
     """
     text = dict()
     while True:

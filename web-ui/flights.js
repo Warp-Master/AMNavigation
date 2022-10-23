@@ -25,8 +25,17 @@ document.addEventListener("click",function(ev){
     }
 });
 
+function get_bus_line(bus){
+    return `Автобус № ${bus["id"]} Водитель: ${bus["driver_name"]}`;
+}
+
 function rewrite_current_task(){
     if(current_task_id != null){
+        var delayed_start_time = document.getElementById("delayed_start_time_id");
+        var delayed_end_time = document.getElementById("delayed_end_time_id");
+        delayed_start_time.value = "";
+        delayed_end_time.value = "";
+
         const current_task = tasks_by_id[current_task_id];
 
         document.getElementById("passengers_count").innerText = current_task["passengers_count"];
@@ -49,6 +58,66 @@ function rewrite_current_task(){
         document.getElementById("airline_name").innerText = current_task["airline_name"];
         document.getElementById("plan_time").innerText = current_task["plan_time"];
         document.getElementById("aircraft_type").innerText = current_task["aircraft_type"];
+
+        let allowed_bus_100 = [];
+        let allowed_bus_50 = [];
+
+        all_buses.forEach(bus => {
+            let is_add = true;
+
+            current_task["buses"].forEach(task_bus => {
+                if(task_bus["id"] === bus["id"]){
+                    is_add = false;
+                }
+            });
+
+            if(is_add){
+                if(bus['type'] === 100){
+                    allowed_bus_100.push(bus);
+                }
+                else{
+                    allowed_bus_50.push(bus);
+                }
+            }
+
+        });
+
+        let html_buf_100 = "";
+        let html_buf_50 = "";
+
+        current_task["buses"].forEach(bus => {
+            let html_bus_select = "";
+            let allowed_buses;
+
+            if(bus['type'] === 100){
+                allowed_buses = allowed_bus_100;
+            }
+            else{
+                allowed_buses = allowed_bus_50;
+            }
+
+            let bus_line = get_bus_line(bus);
+            let html_bus_item = `<option selected value="${bus['id']}">${bus_line}</option>`;
+            html_bus_select += html_bus_item;
+
+            allowed_buses.forEach(allowed_bus => {
+                bus_line = get_bus_line(allowed_bus);
+                html_bus_item = `<option value="${allowed_bus['id']}">${bus_line}</option>`;
+                html_bus_select += html_bus_item;
+            });
+
+            let html_bus = `<br><select class="form-select" id="select-bus-item-${bus['id']}" onchange="select_bus(${bus['id']})">${html_bus_select}</select>`;
+
+            if(bus['type'] === 100){
+                html_buf_100 += html_bus;
+            }
+            else{
+                html_buf_50 += html_bus;
+            }
+        });
+
+        document.getElementById("buses_100").innerHTML = html_buf_100;
+        document.getElementById("buses_50").innerHTML = html_buf_50;
     }
 }
 
@@ -82,6 +151,7 @@ function rewrite_tasks(){
             if(selected_bus !== "any"){
                 let ret = true;
 
+                //TODO get by id
                 task["buses"].forEach(bus => {
                     if(bus['id'] === Number(selected_bus)){
                         ret = false;
@@ -134,7 +204,7 @@ socket.onmessage = function(event) {
             is_selected = "selected";
         }
 
-        let bus_line = `Автобус № ${bus["id"]} Водитель: ${bus["driver_name"]}`;
+        let bus_line = get_bus_line(bus);
         let bus_code = `<option ${is_selected} value="${bus["id"]}">${bus_line}</option>`;
         html_buses += bus_code;
     })
@@ -152,4 +222,32 @@ function select_driver(){
 function select_period(){
     selected_period = document.getElementById("select_period").value;
     rewrite_tasks();
+}
+
+function select_bus(id_bus){
+    var bus_item = document.getElementById(`select-bus-item-${id_bus}`);
+    var selected_bus = bus_item.value;
+    const current_task = tasks_by_id[current_task_id];
+
+    current_task['buses'].forEach(bus_s => {
+        if(bus_s['id'] === id_bus){
+            bus_s['rewrite_to'] = selected_bus;
+        }
+    });
+}
+
+function save_changes(){
+    const current_task = tasks_by_id[current_task_id];
+    var delayed_start_time = document.getElementById("delayed_start_time_id");
+    var delayed_end_time = document.getElementById("delayed_end_time_id");
+
+    update = {
+        'task_id':current_task_id,
+        'delayed_start_time':Number(delayed_start_time.value),
+        'delayed_end_time':Number(delayed_end_time.value),
+        'buses':current_task['buses']
+    };
+
+    socket.send(JSON.stringify(update));
+    alert("Сохранено!");
 }
