@@ -22,3 +22,6 @@ with open("csv/timetable.csv",encoding="UTF-8") as csvfile:
 cur.execute('SELECT * FROM Flight')
 for row in cur.fetchall():
     print(row)
+
+conn.commit()
+conn.close()

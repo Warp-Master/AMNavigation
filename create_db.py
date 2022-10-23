@@ -14,8 +14,10 @@ cur.execute('CREATE TABLE Bus(\
     current_task_id INTEGER NOT NULL,\
     driver_id INTEGER NOT NULL,\
     capacity INTEGER NOT NULL,\
-    status TEXT NOT NULL,\
-    location_id INTEGER NOT NULL\
+    status INT NOT NULL,\
+    location_id INTEGER NOT NULL,\
+    free_location_id INTEGER NOT NULL,\
+    free_time TEXT NOT NULL\
 )')
 cur.execute('CREATE TABLE User(\
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
