@@ -15,6 +15,7 @@ class Task:
     finish_time: datetime
     bus_list: list["Bus"]
 
+
 def update(self):
     database.execute(f"UPDATE Task SET flight_id = '{self.flight.id}',\
         status = '{self.status}', \

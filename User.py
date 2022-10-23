@@ -19,6 +19,7 @@ class User:
     group: Group
     name: str
 
+
 def update(self):
     database.execute(f"UPDATE User SET login = '{self.login}',\
         pwd_hash = '{self.pwd_hash}', \

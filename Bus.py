@@ -29,8 +29,6 @@ class Bus:
     free_location_id: int | None
     free_time: datetime | None
 
-
-
     def time_for_delivery(self, start_time: datetime, graph: Graph, cache: Cache, target_id: int) -> timedelta:
         if self.status == BusStatus.WAITING:
             distance = dijkstra(graph, self.location_id, target_id, cache)[target_id]

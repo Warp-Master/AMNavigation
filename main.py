@@ -1,4 +1,3 @@
-import heapq
 from collections import defaultdict
 from copy import copy
 from datetime import timedelta, datetime
@@ -14,16 +13,13 @@ from config import SMALL_BUS_CNT, SMALL_BUS_CAPACITY, BIG_BUS_CNT, BIG_BUS_CAPAC
 from parser import build_graph, parse_flights, parse_naming_map
 
 
-# import asyncio
-# from asyncio.queues import PriorityQueue
-
-
 class BusPool:
     def __init__(self, small_busses: list, big_busses: list):
         self.small_buses = small_busses
         self.big_buses = big_busses
 
-    def get_optimal_task_sol(self, start_time: datetime, graph: Graph, cache: Cache, pass_cnt: int, target_id: int) -> TaskSolution:
+    def get_optimal_task_sol(self, start_time: datetime, graph: Graph,
+                             cache: Cache, pass_cnt: int, target_id: int) -> TaskSolution:
         """Возвращает наилучшее время, чтобы доставить нужное кол-во машин в target_id и списки необходимых автобусов"""
         get_time = methodcaller("time_for_delivery", start_time, graph, cache, target_id)
         sorted_small = sorted(zip(map(get_time, self.small_buses), self.small_buses), key=itemgetter(0))
