@@ -1,16 +1,23 @@
 from dataclasses import dataclass
 from datetime import datetime
-from db import database
+from enum import Enum
 
 from Flight import Flight
-# from Bus import Bus
+from db import database
+
+
+class TaskStatus(Enum):
+    PLANNED = 0
+    RUNNING = 1
+    FINISHED = 2
+    DENIED = 3
 
 
 @dataclass
 class Task:
     id: int
     flight: Flight
-    status: str
+    status: TaskStatus
     start_time: datetime
     finish_time: datetime
     bus_list: list["Bus"]
