@@ -68,7 +68,7 @@ def load_db():
     index_buses = dict()
     index_users = dict()
 
-    cur.execute("SELECT * FROM \"User\"")
+    cur.execute("SELECT * FROM Users")
     for row in cur.fetchall():
         index_users[row[0]] = User(row[0], row[1], row[2], row[3], row[4], row[5])
 
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     # For test
     conn = sqlite3.connect('bot_db.sqlite')
     cur = conn.cursor()
-    # cur.execute("INSERT INTO User\
+    # cur.execute("INSERT INTO Users\
     #    (login, pwd_hash, salt, group_id, name)\
     #     VALUES ('l1', 'p1', 's1', 1, 'n1')")
     # cur.execute("INSERT INTO Task\

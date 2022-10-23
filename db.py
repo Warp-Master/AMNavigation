@@ -24,7 +24,7 @@ if __name__ == "__main__":
         free_location_id INTEGER NOT NULL,\
         free_time TEXT NOT NULL\
     )')
-    cur.execute('CREATE TABLE User(\
+    cur.execute('CREATE TABLE Users(\
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
         login TEXT NOT NULL,\
         pwd_hash TEXT NOT NULL,\
