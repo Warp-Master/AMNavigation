@@ -1,16 +1,16 @@
-var socket = new WebSocket("ws://localhost:8765/ws");
-var all_tasks = null;
-var tasks_by_id = new Object();
-var all_buses = null;
-var current_task_id = null;
-var selected_bus = "any";
-var selected_period = "any";
+let socket = new WebSocket("ws://localhost:8765/ws");
+let all_tasks = null;
+let tasks_by_id = {};
+let all_buses = null;
+let current_task_id = null;
+let selected_bus = "any";
+let selected_period = "any";
 
 document.addEventListener("click",function(ev){
-    if(ev.target.id.indexOf("tasks-item") != -1){
+    if(ev.target.id.indexOf("tasks-item") !== -1){
         if(current_task_id != null){
-            var active_item_name = `tasks-item-${current_task_id}`;
-            var item = document.getElementById(active_item_name);
+            let active_item_name = `tasks-item-${current_task_id}`;
+            let item = document.getElementById(active_item_name);
             if(item != null){
                 item.classList.remove('active');
             }            
@@ -27,7 +27,7 @@ document.addEventListener("click",function(ev){
 
 function rewrite_current_task(){
     if(current_task_id != null){
-        var current_task = tasks_by_id[current_task_id];
+        const current_task = tasks_by_id[current_task_id];
 
         document.getElementById("passengers_count").innerText = current_task["passengers_count"];
         document.getElementById("start_time").innerText = current_task["start_time"];
@@ -37,7 +37,7 @@ function rewrite_current_task(){
         document.getElementById("terminal_name").innerText = current_task["terminal_name"];
         document.getElementById("date").innerText = current_task["date"];
         
-        var flight_type = "";
+        let flight_type = "";
         if(flight_type === "A"){
             flight_type = "На выход";
         }
@@ -46,7 +46,6 @@ function rewrite_current_task(){
         }
 
         document.getElementById("flight_type").innerText = flight_type;
-
         document.getElementById("airline_name").innerText = current_task["airline_name"];
         document.getElementById("plan_time").innerText = current_task["plan_time"];
         document.getElementById("aircraft_type").innerText = current_task["aircraft_type"];
@@ -55,17 +54,17 @@ function rewrite_current_task(){
 
 function rewrite_tasks(){
     if(all_tasks != null){
-        var text = "";
+        let text = "";
 
         all_tasks.forEach(task => {
             tasks_by_id[task["id"]] = task;
 
             if(selected_period !== "any"){
-                var date = new Date ();
-                var now_hours = date.getHours();
-                var start_time_segs = task['start_time'].split(":");                
+                let date = new Date ();
+                let now_hours = date.getHours();
+                let start_time_segs = task['start_time'].split(":");                
                 
-                var period_segs = selected_period.split(":");
+                let period_segs = selected_period.split(":");
                 if(period_segs[0] === "p"){
                     if(Number(start_time_segs[0]) > now_hours || now_hours - Number(period_segs[1]) > Number(start_time_segs[0])){
                         //TODO return by status
@@ -81,7 +80,7 @@ function rewrite_tasks(){
             }
 
             if(selected_bus !== "any"){
-                var ret = true;
+                let ret = true;
 
                 task["buses"].forEach(bus => {
                     if(bus['id'] === Number(selected_bus)){
@@ -94,14 +93,14 @@ function rewrite_tasks(){
                 }
             }
 
-            var item_name = `tasks-item-${task["id"]}`;
+            let item_name = `tasks-item-${task["id"]}`;
             
-            var is_active = "";
+            let is_active = "";
             if(current_task_id === task["id"]){
                 is_active = "active";
             }
     
-            var on_off_line = "";
+            let on_off_line = "";
             if(task["flight_type"] === "A"){
                 on_off_line = "Прилетает в:";
             }
@@ -109,7 +108,7 @@ function rewrite_tasks(){
                 on_off_line = "Вылетает в:";
             }
 
-            var task_line =`Рейс: ${task["airline_name"]} ${on_off_line} ${task['plan_time']} ${task['date']} Начало задачи: ${task['start_time']} ${task['status']}`;
+            let task_line =`Рейс: ${task["airline_name"]}<br>${on_off_line} ${task['plan_time']} ${task['date']}<br>Начало задачи: ${task['start_time']}<br>${task['status']}`;
     
             text += `<li class="list-group-item list-group-item-action ${is_active}" id="${item_name}">${task_line}</li>`;
         });
@@ -119,15 +118,15 @@ function rewrite_tasks(){
 }
 
 socket.onmessage = function(event) {    
-    var server_data = JSON.parse(event.data);
+    let server_data = JSON.parse(event.data);
     all_tasks = server_data["tasks"];
     all_buses = server_data["buses"];
 
-    var is_selected = "";
+    let is_selected = "";
     if(selected_bus === "any"){
         is_selected = "selected";
     }
-    var html_buses = `<option ${is_selected} value="any">Исполнитель (любой)</option>`;
+    let html_buses = `<option ${is_selected} value="any">Исполнитель (любой)</option>`;
 
     all_buses.forEach(bus => {
         is_selected = "";
@@ -135,8 +134,8 @@ socket.onmessage = function(event) {
             is_selected = "selected";
         }
 
-        var bus_line = `Автобус № ${bus["id"]} Водитель: ${bus["driver_name"]}`;
-        var bus_code = `<option ${is_selected} value="${bus["id"]}">${bus_line}</option>`;
+        let bus_line = `Автобус № ${bus["id"]} Водитель: ${bus["driver_name"]}`;
+        let bus_code = `<option ${is_selected} value="${bus["id"]}">${bus_line}</option>`;
         html_buses += bus_code;
     })
     document.getElementById("select_driver").innerHTML = html_buses;
