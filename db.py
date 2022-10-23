@@ -1,6 +1,5 @@
 import asyncio
 import sqlite3
-import sys
 from queue import Queue
 from threading import Thread
 
@@ -55,26 +54,20 @@ if __name__ == "__main__":
     exit()
 
 
-def get_loop(future: asyncio.Future) -> asyncio.AbstractEventLoop:
-    if sys.version_info >= (3, 7):
-        return future.get_loop()
-    else:
-        return future._loop
-
-
 class DBWorker(Thread):
     def __init__(self):
         super().__init__()
         self.tasks = Queue()
+        self.adb = None
 
-    def run(self) -> None:
+    async def run(self) -> None:
         self.adb = sqlite3.connect('bot_db.sqlite')
 
         def set_result(fut, result):
             if not fut.done():
                 fut.set_result(result)
         while True:
-            type_task, sql, commit_all, future = self.tasks.get()
+            type_task, sql, commit_all, future = await self.tasks.get()
             # print(sql)
             try:
                 if type_task == 1:
@@ -82,14 +75,14 @@ class DBWorker(Thread):
                     if commit_all:
                         self.adb.commit()
                     if future is not None:
-                        get_loop(future).call_soon_threadsafe(set_result, future, None)
+                        future.get_loop().call_soon_threadsafe(set_result, future, None)
                 elif type_task == 2:
                     cur = self.adb.execute(sql)
                     if commit_all:
                         res = cur.fetchall()
                     else:
                         res = cur.fetchone()
-                    get_loop(future).call_soon_threadsafe(set_result, future, res)
+                    future.get_loop().call_soon_threadsafe(set_result, future, res)
                 elif type_task == 3:
                     self.adb.commit()
 
@@ -98,7 +91,7 @@ class DBWorker(Thread):
 
     async def execute_wait(self, sql, commit=True):
         future = asyncio.get_event_loop().create_future()
-        task = (1, sql, commit, future,)
+        task = (1, sql, commit, future)
         self.tasks.put_nowait(task)
         await future
 
@@ -113,7 +106,7 @@ class DBWorker(Thread):
     async def execute_with_res(self, sql, fetchall=True):
         future = asyncio.get_event_loop().create_future()
 
-        task = (2, sql, fetchall, future,)
+        task = (2, sql, fetchall, future)
         self.tasks.put_nowait(task)
 
         return await future
