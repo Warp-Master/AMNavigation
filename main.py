@@ -120,8 +120,6 @@ def main():
                                                                start_id)
         print(f"{flight}\t{solution}")
 
-    # while True:
-    #     ...
     # debug section
     # print(name_mapping)
     # print(*graph.items(), sep="\n")
