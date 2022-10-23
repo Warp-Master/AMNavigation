@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from db import database
+from db import DBWorker
 
 from MyTypes import Graph, NameMap, Cache
 from dijkstra import dijkstra
@@ -35,8 +35,8 @@ class Flight:
     def __gt__(self, other: "Flight") -> bool:
         return self.date > other.date
 
-    def update(self):
-        database.execute(f"UPDATE Flight SET date = '{self.date.strftime('%d.%m.%Y %H:%M')}',\
+    def update(self, db: DBWorker):
+        db.execute(f"UPDATE Flight SET date = '{self.date.strftime('%d.%m.%Y %H:%M')}',\
             flight_type = '{self.type}', \
             terminal_name = '{self.terminal_name}',\
             airline_code = '{self.airline_code}',\

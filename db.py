@@ -12,8 +12,8 @@ if __name__ == "__main__":
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
         flight_id INTEGER NOT NULL,\
         status TEXT NOT NULL,\
-        load_time TEXT NOT NULL,\
-        unload_time TEXT NOT NULL\
+        start_time TEXT NOT NULL,\
+        finish_time TEXT NOT NULL\
     )')
     cur.execute('CREATE TABLE Bus(\
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\

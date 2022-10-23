@@ -3,11 +3,11 @@ from collections import defaultdict
 from datetime import datetime
 
 import csv
-from Bus import Bus
-from Flight import Flight
+from cls.Bus import Bus
+from cls.Flight import Flight
 from MyTypes import NameMap, Graph, Edge
-from Task import Task
-from User import User
+from cls.Task import Task
+from cls.User import User
 
 
 def parse_naming_map(filepath: str) -> NameMap:
@@ -60,6 +60,10 @@ def parse_flights(filepath: str) -> list[Flight]:
 
 
 def load_db():
+    """
+    Todo:
+        - split to separate functions
+    """
     conn = sqlite3.connect('bot_db.sqlite')
     cur = conn.cursor()
 
@@ -111,7 +115,7 @@ if __name__ == "__main__":
     #    (login, pwd_hash, salt, group_id, name)\
     #     VALUES ('l1', 'p1', 's1', 1, 'n1')")
     # cur.execute("INSERT INTO Task\
-    #    (flight_id, status, load_time, unload_time)\
+    #    (flight_id, status, start_time, finish_time)\
     #     VALUES (1, 's1', '01:15', '01:55')")
     # cur.execute("INSERT INTO Bus\
     #    (current_task_id, driver_id, capacity, status, location_id, free_location_id, free_time)\

@@ -1,10 +1,10 @@
-let socket = new WebSocket("ws://localhost:8765/ws");
-let all_tasks = null;
-let tasks_by_id = {};
-let all_buses = null;
-let current_task_id = null;
-let selected_bus = "any";
-let selected_period = "any";
+var socket = new WebSocket("ws://localhost:8765/ws");
+var all_tasks = null;
+var tasks_by_id = new Object();
+var all_buses = null;
+var current_task_id = null;
+var selected_bus = "any";
+var selected_period = "any";
 
 document.addEventListener("click",function(ev){
     if(ev.target.id.indexOf("tasks-item") !== -1){
@@ -55,6 +55,7 @@ function rewrite_current_task(){
         }
 
         document.getElementById("flight_type").innerText = flight_type;
+
         document.getElementById("airline_name").innerText = current_task["airline_name"];
         document.getElementById("plan_time").innerText = current_task["plan_time"];
         document.getElementById("aircraft_type").innerText = current_task["aircraft_type"];
@@ -131,7 +132,7 @@ function rewrite_tasks(){
             if(selected_period !== "any"){
                 let date = new Date ();
                 let now_hours = date.getHours();
-                let start_time_segs = task['start_time'].split(":");                
+                let start_time_segs = task['start_time'].split(":");
                 
                 let period_segs = selected_period.split(":");
                 if(period_segs[0] === "p"){
